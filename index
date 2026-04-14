@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calix Markets — Market Infrastructure for Tokenized Assets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ─── TOKENS ─── */
+:root {
+  --teal: #3ECFAD;
+  --teal-dim: rgba(62,207,173,0.12);
+  --teal-mid: rgba(62,207,173,0.25);
+
+  /* DARK */
+  --bg:         #060A07;
+  --bg-card:    #0D1210;
+  --bg-raised:  #111915;
+  --border:     rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.12);
+  --text:        #F0F5F2;
+  --text-muted:  #7A9088;
+  --text-dim:    #3E5049;
+  --nav-bg:      rgba(6,10,7,0.85);
+}
+[data-theme="light"] {
+  --bg:         #F5F8F6;
+  --bg-card:    #FFFFFF;
+  --bg-raised:  #EBF0EC;
+  --border:     rgba(0,0,0,0.07);
+  --border-mid: rgba(0,0,0,0.12);
+  --text:        #0C1410;
+  --text-muted:  #4A6058;
+  --text-dim:    #9AB0A8;
+  --nav-bg:      rgba(245,248,246,0.88);
+}
+
+/* ─── RESET ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  transition:background .35s,color .35s;
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+
+/* ─── GRAIN OVERLAY ─── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  pointer-events:none;z-index:999;
+  opacity:.028;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+[data-theme="light"] body::before{opacity:.018}
+
+/* ─── TYPOGRAPHY ─── */
+.display{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:800;
+  letter-spacing:-0.03em;
+  line-height:1.02;
+}
+.mono{font-family:'DM Mono',monospace;font-size:.75rem;letter-spacing:.08em}
+
+/* ─── LOGO ─── */
+.logo-mark{height:36px;width:36px;flex-shrink:0;border-radius:8px;overflow:hidden}
+.logo-mark-sm{height:28px;width:28px;flex-shrink:0;border-radius:7px;overflow:hidden}
+.logo-text{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:700;font-size:1.05rem;
+  letter-spacing:-0.02em;
+  color:var(--text);
+}
+.logo-text-sm{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:700;font-size:.9rem;
+  letter-spacing:-0.02em;
+  color:var(--text);
+}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2.5rem;
+  background:var(--nav-bg);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
+  transition:background .35s,border-color .35s;
+}
+.nav-logo{display:flex;align-items:center;gap:.7rem}
+.nav-logo img{height:34px;width:auto}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{
+  font-size:.88rem;font-weight:500;
+  color:var(--text-muted);
+  transition:color .2s;
+}
+.nav-links a:hover{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.btn-cta{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.55rem 1.25rem;
+  background:var(--teal);
+  color:#060A07;
+  font-size:.85rem;font-weight:600;
+  border-radius:6px;
+  transition:opacity .2s,transform .15s;
+}
+.btn-cta:hover{opacity:.88;transform:translateY(-1px)}
+.theme-toggle{
+  width:36px;height:36px;
+  border-radius:8px;
+  border:1px solid var(--border-mid);
+  display:grid;place-items:center;
+  color:var(--text-muted);
+  transition:color .2s,border-color .2s,background .35s;
+}
+.theme-toggle:hover{color:var(--text);border-color:var(--border-mid)}
+.icon-sun,.icon-moon{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+[data-theme="dark"] .icon-sun{display:none}
+[data-theme="light"] .icon-moon{display:none}
+
+/* ─── HERO ─── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:flex-start;justify-content:center;
+  padding:10rem 2.5rem 5rem;
+  position:relative;overflow:hidden;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.3rem .9rem;
+  border:1px solid var(--teal-mid);
+  border-radius:100px;
+  background:var(--teal-dim);
+  color:var(--teal);
+  font-size:.76rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:2rem;
+}
+.hero-eyebrow span{width:5px;height:5px;border-radius:50%;background:var(--teal);display:block}
+.hero h1{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:800;
+  font-size:clamp(3.2rem,7vw,7.5rem);
+  letter-spacing:-0.04em;
+  line-height:1.0;
+  max-width:14ch;
+  margin-bottom:1.75rem;
+}
+.hero h1 em{
+  font-style:normal;
+  color:var(--teal);
+}
+.hero-sub{
+  font-size:clamp(1rem,1.6vw,1.2rem);
+  color:var(--text-muted);
+  max-width:46ch;
+  line-height:1.7;
+  margin-bottom:2.5rem;
+  font-weight:300;
+}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.65rem 1.4rem;
+  border:1px solid var(--border-mid);
+  border-radius:6px;
+  font-size:.9rem;font-weight:500;
+  color:var(--text-muted);
+  transition:color .2s,border-color .2s;
+}
+.btn-outline:hover{color:var(--text);border-color:var(--teal)}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.65rem 1.6rem;
+  background:var(--teal);
+  color:#060A07;
+  font-size:.9rem;font-weight:600;
+  border-radius:6px;
+  transition:opacity .2s,transform .15s;
+}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+
+/* Hero canvas - full bleed background */
+#hero-canvas{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  opacity:1;
+  pointer-events:none;
+  z-index:0;
+}
+/* Always dark overlay for readability */
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(105deg,rgba(4,12,6,0.82) 0%,rgba(4,12,6,0.55) 55%,rgba(4,12,6,0.2) 100%);
+  z-index:1;
+  pointer-events:none;
+}
+/* Force white text in hero regardless of theme */
+.hero,.hero *:not(.btn-primary){color:#fff !important}
+.hero .hero-sub{color:rgba(255,255,255,0.72) !important}
+.hero .btn-outline{border-color:rgba(255,255,255,0.3) !important;color:rgba(255,255,255,0.8) !important}
+.hero .btn-outline:hover{border-color:var(--teal) !important;color:#fff !important}
+.hero .hero-eyebrow{color:var(--teal) !important}
+.hero > *:not(#hero-canvas):not(.hero-overlay){position:relative;z-index:2}
+
+/* ─── MARQUEE ─── */
+.marquee-section{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:1.25rem 0;
+  overflow:hidden;
+}
+.marquee-label{
+  text-align:center;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:1rem;
+  font-weight:500;
+}
+.marquee-track{
+  display:flex;
+  animation:marquee 28s linear infinite;
+  width:max-content;
+}
+.marquee-track:hover{animation-play-state:paused}
+.marquee-item{
+  display:flex;align-items:center;
+  padding:0 2.5rem;
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:600;
+  font-size:1.1rem;
+  color:var(--text-muted);
+  white-space:nowrap;
+  transition:color .2s;
+}
+.marquee-item::after{
+  content:'';
+  width:4px;height:4px;
+  border-radius:50%;
+  background:var(--teal);
+  margin-left:2.5rem;
+  opacity:.5;
+}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ─── SECTIONS ─── */
+section{padding:6rem 2.5rem}
+.section-label{
+  display:inline-flex;align-items:center;gap:.5rem;
+  color:var(--teal);
+  font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.section-label::before{
+  content:'';width:20px;height:1px;background:var(--teal);
+}
+.section-title{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:800;
+  font-size:clamp(2rem,4vw,3.5rem);
+  letter-spacing:-0.03em;
+  line-height:1.05;
+  max-width:18ch;
+  margin-bottom:1.25rem;
+}
+.section-sub{
+  color:var(--text-muted);
+  max-width:52ch;
+  line-height:1.75;
+  font-size:1rem;
+  font-weight:300;
+}
+
+/* ─── HOW IT WORKS ─── */
+.steps-grid{
+  margin-top:4rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1.5px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.step{
+  background:var(--bg-card);
+  padding:2.25rem 2rem;
+  display:flex;flex-direction:column;gap:1rem;
+  transition:background .2s;
+}
+.step:hover{background:var(--bg-raised)}
+.step-num{
+  font-family:'DM Mono',monospace;
+  font-size:.75rem;letter-spacing:.1em;
+  color:var(--teal);
+  font-weight:500;
+}
+.step h3{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:700;font-size:1.35rem;
+  letter-spacing:-0.02em;
+}
+.step p{color:var(--text-muted);font-size:.92rem;line-height:1.7;font-weight:300}
+.step-icon{
+  width:38px;height:38px;
+  border-radius:9px;
+  background:var(--teal-dim);
+  border:1px solid var(--teal-mid);
+  display:grid;place-items:center;
+  margin-bottom:.25rem;
+}
+.step-icon svg{width:17px;height:17px;stroke:var(--teal);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+
+
+/* ─── USE CASES ─── */
+.use-cases-grid{
+  margin-top:4rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:1.25rem;
+}
+.use-case{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:2.5rem 2rem;
+  display:flex;flex-direction:column;gap:1rem;
+  transition:border-color .25s,transform .2s,background .2s;
+}
+.use-case:hover{
+  border-color:var(--teal-mid);
+  transform:translateY(-3px);
+  background:var(--bg-raised);
+}
+.uc-label{
+  font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--teal);font-weight:500;
+}
+.use-case h3{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:700;font-size:1.3rem;
+  letter-spacing:-0.02em;
+  line-height:1.15;
+}
+.use-case p{color:var(--text-muted);font-size:.9rem;line-height:1.75;font-weight:300;flex:1}
+.uc-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}
+.uc-tag{
+  padding:.2rem .7rem;
+  border:1px solid var(--border-mid);
+  border-radius:100px;
+  font-size:.72rem;font-weight:500;
+  color:var(--text-muted);
+}
+
+/* ─── PHILOSOPHY TWO-COL ─── */
+.philosophy-two-col{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5rem;
+  align-items:start;
+}
+.philosophy-left{}
+.philosophy-left blockquote{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:600;
+  font-size:clamp(1.2rem,2vw,1.8rem);
+  letter-spacing:-0.02em;
+  line-height:1.3;
+  color:var(--text);
+  border-left:3px solid var(--teal);
+  padding-left:1.5rem;
+  margin:2rem 0;
+}
+.philosophy-left p{
+  color:var(--text-muted);
+  font-size:.95rem;line-height:1.85;font-weight:300;
+  margin-bottom:1.1rem;
+}
+.philosophy-right{}
+.cta-sticky{
+  position:sticky;
+  top:6rem;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:2.5rem;
+  display:flex;flex-direction:column;gap:1.25rem;
+}
+.cta-heading{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:800;
+  font-size:clamp(1.6rem,2.5vw,2.2rem);
+  letter-spacing:-0.03em;
+  line-height:1.1;
+}
+.cta-sub{
+  color:var(--text-muted);
+  font-size:.9rem;line-height:1.75;font-weight:300;
+}
+.cta-buttons{display:flex;gap:.75rem;flex-wrap:wrap}
+
+@media(max-width:900px){
+  .philosophy-two-col{grid-template-columns:1fr;gap:3rem}
+  .cta-sticky{position:static}
+}
+
+/* ─── PHILOSOPHY (keep old vars used elsewhere) ─── */
+.philosophy{
+  background:var(--bg-raised);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.philosophy-inner{
+  max-width:800px;
+}
+.philosophy blockquote{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:600;
+  font-size:clamp(1.4rem,2.5vw,2.1rem);
+  letter-spacing:-0.02em;
+  line-height:1.3;
+  color:var(--text);
+  border-left:3px solid var(--teal);
+  padding-left:1.75rem;
+  margin:2.5rem 0;
+}
+.philosophy p{
+  color:var(--text-muted);
+  font-size:1rem;line-height:1.85;font-weight:300;
+  margin-bottom:1.25rem;
+}
+.philosophy-contact{
+  display:flex;flex-wrap:wrap;gap:1rem;
+  margin-top:2.5rem;
+  padding-top:2rem;
+  border-top:1px solid var(--border);
+}
+.contact-item{
+  display:flex;align-items:center;gap:.6rem;
+  padding:.65rem 1.2rem;
+  border:1px solid var(--border-mid);
+  border-radius:8px;
+  font-size:.85rem;font-weight:500;
+  color:var(--text-muted);
+  transition:color .2s,border-color .2s;
+}
+.contact-item:hover{color:var(--teal);border-color:var(--teal-mid)}
+.contact-item svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* ─── BENCHMARKS ─── */
+.benchmarks-row{
+  margin-top:4rem;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.bench{
+  background:var(--bg-card);
+  padding:2rem 1.75rem;
+  text-align:center;
+  transition:background .2s;
+}
+.bench:hover{background:var(--bg-raised)}
+.bench-val{
+  font-family:'Bricolage Grotesque',sans-serif;
+  font-weight:800;font-size:2.5rem;
+  letter-spacing:-0.04em;
+  color:var(--teal);
+  line-height:1;margin-bottom:.4rem;
+}
+.bench-label{font-size:.82rem;color:var(--text-muted);font-weight:400}
+
+/* ─── FOOTER ─── */
+footer{
+  padding:2rem 2.5rem;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.footer-logo{display:flex;align-items:center;gap:.6rem}
+.footer-logo img{height:26px}
+.footer-copy{font-size:.8rem;color:var(--text-dim)}
+
+/* ─── ANIMATIONS ─── */
+.reveal{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.reveal.visible{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+.reveal-delay-4{transition-delay:.4s}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  nav{padding:.8rem 1.25rem}
+  .nav-links{display:none}
+  .hero{padding:8rem 1.25rem 4rem}
+  section{padding:4rem 1.25rem}
+  .steps-grid,.modules-grid,.benchmarks-row{grid-template-columns:1fr}
+  .use-cases-grid{grid-template-columns:1fr}
+  #hero-canvas{display:none}
+  footer{flex-direction:column;align-items:flex-start}
+  .philosophy-contact{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <svg class="logo-mark" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+      <rect width="56" height="56" rx="11" fill="#080E09"/>
+      <!-- Top white 3/4 circle: center (20,26), r=14. Missing bottom-right quarter. -->
+      <path d="M20 26 L20 12 A14 14 0 1 0 34 26 Z" fill="white"/>
+      <!-- Teal circle -->
+      <circle cx="27.5" cy="18" r="7" fill="#4ECAB3"/>
+      <!-- Bottom white bowl (semicircle, bottom half): center (34,34), r=12 -->
+      <path d="M22 34 A12 12 0 0 0 46 34 Z" fill="white"/>
+    </svg>
+    <span class="logo-text">Calix Markets</span>
+  </div>
+  <div class="nav-links">
+    <a href="#approach">Approach</a>
+    <a href="#use-cases">Use Cases</a>
+    <a href="#exchanges">Exchanges</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <!-- Sun icon -->
+      <svg class="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <!-- Moon icon -->
+      <svg class="icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-cta">Contact Us →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-eyebrow reveal">
+    <span></span>
+    End-to-End Market Infrastructure · Tokenized Assets
+  </div>
+
+  <h1 class="reveal reveal-delay-1">
+    Markets Built to <em>Withstand</em> Real Conditions.
+  </h1>
+
+  <p class="hero-sub reveal reveal-delay-2">
+    Calix Markets brings structure, control, and continuity to token economies.
+    Where fragmented models distribute responsibility, we consolidate execution
+    into a unified infrastructure layer — engineered for alignment, resilience, and compounding performance.
+  </p>
+
+  <div class="hero-actions reveal reveal-delay-3">
+    <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-primary">
+      Schedule a Call →
+    </a>
+    <a href="#approach" class="btn-outline">See How It Works</a>
+  </div>
+</section>
+
+<!-- EXCHANGE PARTNERS MARQUEE -->
+<div class="marquee-section" id="exchanges">
+  <p class="marquee-label">Exchange Partners</p>
+  <div class="marquee-track" id="marqueeTrack">
+    <!-- duplicated for seamless loop -->
+  </div>
+</div>
+
+<!-- BENCHMARKS -->
+<section>
+  <div class="section-label reveal">Track Record</div>
+  <h2 class="section-title reveal reveal-delay-1">Numbers that define our standard.</h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Our quantitative trading strategy team combines institutional expertise with hands-on execution — every decision compounds over time.
+  </p>
+  <div class="benchmarks-row">
+    <div class="bench reveal">
+      <div class="bench-val">$1B+</div>
+      <div class="bench-label">Tokenized market volume guided</div>
+    </div>
+    <div class="bench reveal reveal-delay-1">
+      <div class="bench-val">14+</div>
+      <div class="bench-label">Exchange partners worldwide</div>
+    </div>
+    <div class="bench reveal reveal-delay-2">
+      <div class="bench-val">5</div>
+      <div class="bench-label">Infrastructure control modules</div>
+    </div>
+    <div class="bench reveal reveal-delay-3">
+      <div class="bench-val">24/7</div>
+      <div class="bench-label">Continuous market governance</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="approach">
+  <div class="section-label reveal">Approach</div>
+  <h2 class="section-title reveal reveal-delay-1">A unified execution layer — from architecture to continuity.</h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Markets perform when they are designed and managed as systems, not services. Here's how we build them.
+  </p>
+  <div class="steps-grid">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Structure</h3>
+      <p>Token architecture is evaluated against live trading conditions from the outset. Float, vesting, and distribution are calibrated against liquidity capacity and real market absorption — not treated as abstract design variables.</p>
+    </div>
+    <div class="step reveal reveal-delay-1">
+      <div class="step-num">02</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <h3>Launch</h3>
+      <p>Participation is not left to chance. Liquidity enters with intent. Order books are structured to support depth that holds under pressure. Price discovery is guided within defined behavioral parameters so early activity establishes stability — not distortion.</p>
+    </div>
+    <div class="step reveal reveal-delay-2">
+      <div class="step-num">03</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Govern</h3>
+      <p>Markets are not left to drift once initial traction is achieved. They are governed as evolving systems, continuously aligned with unlocks, volatility cycles, exchange expansions, and demand shifts — at every stage.</p>
+    </div>
+    <div class="step reveal reveal-delay-3">
+      <div class="step-num">04</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <h3>Compound</h3>
+      <p>Exposure is recalibrated. Structure is continuously reinforced. Battle-tested algorithms and meticulous strategies keep you a step ahead — adapting liquidity across all conditions so performance compounds rather than dissipates.</p>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="use-cases">
+  <div class="section-label reveal">Use Cases</div>
+  <h2 class="section-title reveal reveal-delay-1">Built for the teams shaping token economies.</h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Whether you're preparing for launch or governing an active market, Calix Markets provides the infrastructure layer your project requires.
+  </p>
+  <div class="use-cases-grid">
+    <div class="use-case reveal">
+      <div class="uc-label">Use Case 01</div>
+      <h3>Pre-Launch Market Architecture</h3>
+      <p>Token teams designing their economy need to model liquidity behavior before trading begins. We evaluate float, vesting schedules, and distribution against real absorption capacity — ensuring your market is designed to withstand participation from day one, not just in stable conditions.</p>
+      <div class="uc-tags">
+        <span class="uc-tag">Tokenomics Design</span>
+        <span class="uc-tag">Liquidity Modeling</span>
+        <span class="uc-tag">Pre-Launch Strategy</span>
+      </div>
+    </div>
+    <div class="use-case reveal reveal-delay-1">
+      <div class="uc-label">Use Case 02</div>
+      <h3>Exchange Listing & Venue Sequencing</h3>
+      <p>Every exchange introduces a distinct liquidity regime and extraction risk profile. The order in which a token is exposed to these environments permanently shapes how it trades and how capital engages. We coordinate listing structure, market-making behavior, and treasury exposure into a single controlled layer — never to satisfy speculative visibility, only when operationally ready.</p>
+      <div class="uc-tags">
+        <span class="uc-tag">Tier 1–3 Listings</span>
+        <span class="uc-tag">Venue Sequencing</span>
+        <span class="uc-tag">CEX Strategy</span>
+      </div>
+    </div>
+    <div class="use-case reveal reveal-delay-2">
+      <div class="uc-label">Use Case 03</div>
+      <h3>Post-Launch Liquidity Governance</h3>
+      <p>The first 12–18 months define a token's long-term trajectory. Unlock cycles, volatility events, and demand shifts require continuous recalibration — not static management. We govern markets as evolving systems, adapting structure and exposure so that early traction compounds into durable performance rather than short-lived activity.</p>
+      <div class="uc-tags">
+        <span class="uc-tag">Unlock Management</span>
+        <span class="uc-tag">Volatility Containment</span>
+        <span class="uc-tag">Ongoing Governance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY + BUILD WITH US (two-column) -->
+<section class="philosophy" id="contact">
+  <div class="philosophy-two-col">
+
+    <!-- LEFT: Philosophy -->
+    <div class="philosophy-left">
+      <div class="section-label reveal">Philosophy</div>
+      <h2 class="section-title reveal reveal-delay-1">We architect markets for survivability — not optics.</h2>
+
+      <blockquote class="reveal reveal-delay-2">
+        "Most token markets are not engineered systems. They are unmanaged outcomes of disconnected incentives, fragmented liquidity, and short-term decision layers."
+      </blockquote>
+
+      <p class="reveal">
+        Teams today are more sophisticated than ever. Capital formation is deliberate. Token design is modeled with precision. Yet when the asset enters its trading environment, that same discipline rarely carries forward. Liquidity provisioning, treasury behavior, and market making begin to operate as parallel functions — no governing layer takes responsibility for how they work together.
+      </p>
+      <p class="reveal">
+        Calix Markets exists to challenge these structural inefficiencies at the foundational level. Not by layering over existing service frameworks, but by rebuilding how market-making and economies interact at their core. We consolidate control into a unified execution layer designed for alignment, resilience, and continuity.
+      </p>
+      <p class="reveal">
+        Strong market environments are rarely accidental. They are compounded through deliberate decision-making and economic architecture that strengthens the underlying business — not just satisfies external metrics.
+      </p>
+    </div>
+
+    <!-- RIGHT: CTA -->
+    <div class="philosophy-right">
+      <div class="cta-sticky reveal">
+        <h3 class="cta-heading">Ready to build a market that endures?</h3>
+        <p class="cta-sub">
+          The first 12–18 months define a token economy's trajectory for the long haul. If you're looking to build with clarity, discipline, and shared conviction — the next step begins with a conversation.
+        </p>
+        <div class="cta-buttons">
+          <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-primary" style="font-size:.95rem;padding:.75rem 1.75rem">
+            Schedule a Call →
+          </a>
+          <a href="/cdn-cgi/l/email-protection#2650434852535443550845474a4f5e66414b474f4a0845494b" class="btn-outline" style="font-size:.95rem;padding:.75rem 1.75rem">
+            Write to Us
+          </a>
+        </div>
+        <div class="philosophy-contact" style="margin-top:0;padding-top:1.75rem;border-top:1px solid var(--border);flex-direction:column;gap:.6rem">
+          <a href="https://calendly.com/calixmarkets" target="_blank" class="contact-item">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            calendly.com/calixmarkets
+          </a>
+          <a href="/cdn-cgi/l/email-protection#1264777c66676077613c71737e7b6a52757f737b7e3c717d7f" class="contact-item">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span class="__cf_email__" data-cfemail="ed9b888399989f889ec38e8c818495ad8a808c8481c38e8280">[email&#160;protected]</span>
+          </a>
+          <a href="https://t.me/RaghuRajRai" target="_blank" class="contact-item">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            @RaghuRajRai & @caseykman
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <svg class="logo-mark-sm" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+      <rect width="56" height="56" rx="11" fill="#080E09"/>
+      <path d="M20 26 L20 12 A14 14 0 1 0 34 26 Z" fill="white"/>
+      <circle cx="27.5" cy="18" r="7" fill="#4ECAB3"/>
+      <path d="M22 34 A12 12 0 0 0 46 34 Z" fill="white"/>
+    </svg>
+    <span class="logo-text-sm">Calix Markets</span>
+  </div>
+  <p class="footer-copy">© 2025 Calix Markets. All rights reserved.</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* ─── THEME TOGGLE ─── */
+const html = document.documentElement;
+const btn = document.getElementById('themeToggle');
+btn.addEventListener('click', () => {
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+});
+
+/* ─── MARQUEE ─── */
+const exchanges = ['Binance','OKX','Upbit','ByBit','Bitget','Gate.io','KuCoin','MEXC','Bitfinex','BingX','Kraken','Bithumb','HTX','Coinbase'];
+const track = document.getElementById('marqueeTrack');
+// Duplicate for seamless loop
+[...exchanges, ...exchanges].forEach(name => {
+  const el = document.createElement('div');
+  el.className = 'marquee-item';
+  el.textContent = name;
+  track.appendChild(el);
+});
+
+/* ─── HERO CANVAS — TOUCAN + CHARTS ─── */
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+// ── Candlestick data ──
+const CANDLES = 60;
+let candles = [];
+let priceHistory = [];
+let frameCount = 0;
+
+function genCandle(prev) {
+  const open = prev ? prev.close : 100 + Math.random()*40;
+  const move = (Math.random()-0.46)*4.5;
+  const close = open + move;
+  const high = Math.max(open,close) + Math.random()*3;
+  const low  = Math.min(open,close) - Math.random()*3;
+  const vol  = 0.3 + Math.random()*0.7;
+  return {open,close,high,low,vol};
+}
+
+function initCandles() {
+  candles = [];
+  for(let i=0;i<CANDLES;i++) candles.push(genCandle(candles[i-1]));
+  priceHistory = candles.map(c=>c.close);
+}
+
+function resize() {
+  const hero = canvas.parentElement;
+  W = hero.offsetWidth || window.innerWidth;
+  H = hero.offsetHeight || window.innerHeight;
+  canvas.width = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  initCandles();
+}
+
+// ── Draw toucan ──
+function drawToucan(cx, cy, sc) {
+  // Branch
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx-55*sc, cy+82*sc); ctx.lineTo(cx+65*sc, cy+82*sc);
+  ctx.strokeStyle='rgba(60,40,15,0.7)'; ctx.lineWidth=9*sc; ctx.lineCap='round'; ctx.stroke();
+
+  // Body
+  ctx.beginPath();
+  ctx.ellipse(cx+5*sc, cy+32*sc, 42*sc, 50*sc, -0.08, 0, Math.PI*2);
+  ctx.fillStyle='rgba(15,15,15,0.88)'; ctx.fill();
+
+  // White chest
+  ctx.beginPath();
+  ctx.ellipse(cx+14*sc, cy+18*sc, 20*sc, 28*sc, 0.15, 0, Math.PI*2);
+  ctx.fillStyle='rgba(245,240,220,0.92)'; ctx.fill();
+
+  // Teal chest band
+  ctx.beginPath();
+  ctx.ellipse(cx+15*sc, cy+44*sc, 18*sc, 8*sc, 0.1, 0, Math.PI*2);
+  ctx.fillStyle='rgba(62,207,173,0.85)'; ctx.fill();
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(cx+18*sc, cy-28*sc, 30*sc, 0, Math.PI*2);
+  ctx.fillStyle='rgba(12,12,12,0.9)'; ctx.fill();
+
+  // Beak — lower jaw (yellow-orange)
+  ctx.beginPath();
+  ctx.moveTo(cx+42*sc, cy-18*sc);
+  ctx.bezierCurveTo(cx+115*sc,cy-8*sc,  cx+130*sc,cy+8*sc,  cx+90*sc,cy+18*sc);
+  ctx.bezierCurveTo(cx+80*sc, cy+14*sc, cx+55*sc, cy+2*sc,  cx+42*sc, cy-8*sc);
+  ctx.closePath();
+  ctx.fillStyle='rgba(235,185,55,0.95)'; ctx.fill();
+
+  // Beak — upper jaw (green to yellow)
+  const beakGrad = ctx.createLinearGradient(cx+42*sc,0,cx+130*sc,0);
+  beakGrad.addColorStop(0,'rgba(90,175,60,0.95)');
+  beakGrad.addColorStop(0.5,'rgba(160,200,50,0.9)');
+  beakGrad.addColorStop(1,'rgba(235,185,55,0.9)');
+  ctx.beginPath();
+  ctx.moveTo(cx+42*sc, cy-18*sc);
+  ctx.bezierCurveTo(cx+115*sc,cy-32*sc, cx+132*sc,cy-12*sc, cx+90*sc,cy+4*sc);
+  ctx.bezierCurveTo(cx+80*sc, cy-2*sc,  cx+55*sc, cy-12*sc, cx+42*sc,cy-18*sc);
+  ctx.closePath();
+  ctx.fillStyle=beakGrad; ctx.fill();
+
+  // Beak ridge line
+  ctx.beginPath();
+  ctx.moveTo(cx+42*sc, cy-18*sc);
+  ctx.bezierCurveTo(cx+115*sc,cy-20*sc, cx+128*sc,cy-10*sc, cx+90*sc,cy+10*sc);
+  ctx.strokeStyle='rgba(80,50,0,0.3)'; ctx.lineWidth=1.5*sc; ctx.stroke();
+
+  // Eye ring
+  ctx.beginPath();
+  ctx.arc(cx+34*sc, cy-36*sc, 9*sc, 0, Math.PI*2);
+  ctx.fillStyle='rgba(62,207,173,0.7)'; ctx.fill();
+
+  // Eye white
+  ctx.beginPath();
+  ctx.arc(cx+34*sc, cy-36*sc, 7*sc, 0, Math.PI*2);
+  ctx.fillStyle='rgba(245,245,245,1)'; ctx.fill();
+
+  // Pupil
+  ctx.beginPath();
+  ctx.arc(cx+35*sc, cy-36*sc, 4*sc, 0, Math.PI*2);
+  ctx.fillStyle='#050f07'; ctx.fill();
+
+  // Eye highlight
+  ctx.beginPath();
+  ctx.arc(cx+33*sc, cy-38*sc, 1.5*sc, 0, Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fill();
+
+  // Tail feathers
+  ctx.beginPath();
+  ctx.moveTo(cx-32*sc, cy+50*sc);
+  ctx.bezierCurveTo(cx-70*sc,cy+55*sc, cx-75*sc,cy+75*sc, cx-55*sc,cy+80*sc);
+  ctx.bezierCurveTo(cx-80*sc,cy+70*sc, cx-80*sc,cy+50*sc, cx-32*sc,cy+48*sc);
+  ctx.fillStyle='rgba(15,15,15,0.85)'; ctx.fill();
+
+  // Feet
+  [cx-8*sc, cx+16*sc].forEach(fx=>{
+    ctx.beginPath();
+    ctx.moveTo(fx, cy+79*sc);
+    ctx.lineTo(fx-12*sc, cy+89*sc);
+    ctx.moveTo(fx, cy+79*sc);
+    ctx.lineTo(fx, cy+91*sc);
+    ctx.moveTo(fx, cy+79*sc);
+    ctx.lineTo(fx+10*sc, cy+87*sc);
+    ctx.strokeStyle='rgba(60,40,15,0.75)';
+    ctx.lineWidth=3.5*sc; ctx.lineCap='round'; ctx.stroke();
+  });
+
+  ctx.restore();
+}
+
+// ── Draw charts ──
+function drawCharts() {
+  const chartX = 30, chartY = H*0.18;
+  const chartW = W*0.52, chartH = H*0.48;
+
+  // Grid
+  ctx.save();
+  for(let i=0;i<=5;i++){
+    const y = chartY + (chartH/5)*i;
+    ctx.beginPath(); ctx.moveTo(chartX,y); ctx.lineTo(chartX+chartW,y);
+    ctx.strokeStyle='rgba(62,207,173,0.08)'; ctx.lineWidth=1; ctx.stroke();
+  }
+  for(let i=0;i<=8;i++){
+    const x = chartX + (chartW/8)*i;
+    ctx.beginPath(); ctx.moveTo(x,chartY); ctx.lineTo(x,chartY+chartH);
+    ctx.strokeStyle='rgba(62,207,173,0.06)'; ctx.lineWidth=1; ctx.stroke();
+  }
+  ctx.restore();
+
+  // Price range
+  const allPrices = candles.flatMap(c=>[c.high,c.low]);
+  const minP = Math.min(...allPrices)-2, maxP = Math.max(...allPrices)+2;
+  const priceRange = maxP - minP;
+  const toY = p => chartY + chartH - ((p-minP)/priceRange)*chartH;
+  const candleW = (chartW/CANDLES)*0.72;
+  const gap     = (chartW/CANDLES);
+
+  // Volume bars
+  ctx.save();
+  candles.forEach((c,i)=>{
+    const x = chartX + i*gap;
+    const isUp = c.close>=c.open;
+    ctx.fillStyle = isUp ? 'rgba(62,207,173,0.15)' : 'rgba(255,90,90,0.12)';
+    const volH = c.vol * (chartH*0.18);
+    ctx.fillRect(x, chartY+chartH-volH, candleW, volH);
+  });
+  ctx.restore();
+
+  // Candles
+  ctx.save();
+  candles.forEach((c,i)=>{
+    const x = chartX + i*gap + candleW*0.5 - 0.5;
+    const isUp = c.close>=c.open;
+    const col = isUp ? 'rgba(62,207,173,0.9)' : 'rgba(255,90,90,0.85)';
+    // Wick
+    ctx.beginPath();
+    ctx.moveTo(x, toY(c.high)); ctx.lineTo(x, toY(c.low));
+    ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.stroke();
+    // Body
+    const bodyTop = toY(Math.max(c.open,c.close));
+    const bodyBot = toY(Math.min(c.open,c.close));
+    const bodyH = Math.max(1.5, bodyBot-bodyTop);
+    ctx.fillStyle=col;
+    ctx.fillRect(chartX+i*gap, bodyTop, candleW, bodyH);
+  });
+  ctx.restore();
+
+  // Price line (smooth)
+  ctx.save();
+  ctx.beginPath();
+  priceHistory.forEach((p,i)=>{
+    const x = chartX + i*gap + candleW/2;
+    const y = toY(p);
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='rgba(62,207,173,0.55)'; ctx.lineWidth=1.5;
+  ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+
+  // Glow on last price
+  const lastX = chartX+(candles.length-1)*gap+candleW/2;
+  const lastY = toY(priceHistory[priceHistory.length-1]);
+  const pulse = Math.sin(frameCount*0.05)*0.5+0.5;
+  ctx.beginPath();
+  ctx.arc(lastX,lastY,4+pulse*3,0,Math.PI*2);
+  ctx.fillStyle=`rgba(62,207,173,${0.2+pulse*0.3})`; ctx.fill();
+  ctx.beginPath();
+  ctx.arc(lastX,lastY,3,0,Math.PI*2);
+  ctx.fillStyle='rgba(62,207,173,1)'; ctx.fill();
+
+  // Price label
+  const lastPrice = priceHistory[priceHistory.length-1];
+  ctx.fillStyle='rgba(62,207,173,1)';
+  ctx.font=`500 11px 'DM Mono', monospace`;
+  ctx.fillText(lastPrice.toFixed(2), lastX+8, lastY+4);
+
+  ctx.restore();
+
+  // Chart labels
+  ctx.save();
+  ctx.fillStyle='rgba(255,255,255,0.25)';
+  ctx.font=`400 10px 'DM Mono', monospace`;
+  ctx.fillText('CALIX / USD', chartX, chartY-10);
+  ctx.fillStyle='rgba(62,207,173,0.6)';
+  ctx.fillText('LIVE', chartX+80, chartY-10);
+  ctx.restore();
+}
+
+// ── Firefly nodes ──
+let nodes = [];
+function initNodes() {
+  nodes = Array.from({length:14},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+    r:Math.random()*1.8+.8, pulse:Math.random()*Math.PI*2
+  }));
+}
+
+function drawFrame() {
+  frameCount++;
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  const bgGrad = ctx.createLinearGradient(0,0,W,H);
+  bgGrad.addColorStop(0,'#04100A');
+  bgGrad.addColorStop(0.5,'#061209');
+  bgGrad.addColorStop(1,'#040d07');
+  ctx.fillStyle=bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // Subtle radial glow center-right
+  const glow = ctx.createRadialGradient(W*.7,H*.4,0,W*.7,H*.4,W*.55);
+  glow.addColorStop(0,'rgba(62,207,173,0.06)');
+  glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+
+  // Toucan (right side)
+  if(W>600) {
+    const toucanX = W*0.78, toucanY = H*0.46, toucanSc = Math.min(H/600, W/900)*1.1;
+    drawToucan(toucanX, toucanY, toucanSc);
+  }
+
+  // Charts (left/center)
+  drawCharts();
+
+  // Floating nodes
+  nodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy; n.pulse+=.012;
+    if(n.x<0||n.x>W) n.vx*=-1;
+    if(n.y<0||n.y>H) n.vy*=-1;
+  });
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i],b=nodes[j];
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<160){
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(62,207,173,${(1-d/160)*.12})`; ctx.lineWidth=.7; ctx.stroke();
+      }
+    }
+  }
+  nodes.forEach(n=>{
+    const p=Math.sin(n.pulse)*.5+.5;
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r+p,0,Math.PI*2);
+    ctx.fillStyle=`rgba(62,207,173,${.25+p*.3})`; ctx.fill();
+  });
+
+  // Scroll new candle every ~90 frames
+  if(frameCount%90===0){
+    candles.shift(); candles.push(genCandle(candles[candles.length-1]));
+    priceHistory.shift(); priceHistory.push(candles[candles.length-1].close);
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+window.addEventListener('resize',()=>{ resize(); initNodes(); });
+
+// Delay init to ensure layout is computed
+window.addEventListener('load', () => { resize(); initNodes(); drawFrame(); });
+
+/* ─── SCROLL REVEAL ─── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: .12 });
+
+document.querySelectorAll('.reveal').forEach(el => {
+  observer.observe(el);
+  if (el.closest('.hero')) {
+    setTimeout(() => el.classList.add('visible'), 100);
+  }
+});
+</script>
+</body>
+</html>
