@@ -135,10 +135,24 @@ nav{
 /* ─── HERO ─── */
 .hero{
   min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:stretch;
+  padding:0;
+  position:relative;
+  overflow:hidden;
+}
+.hero-content{
+  padding:9rem 3rem 5rem 4rem;
   display:flex;flex-direction:column;
-  align-items:flex-start;justify-content:center;
-  padding:10rem 2.5rem 5rem;
-  position:relative;overflow:hidden;
+  justify-content:center;
+  gap:1.5rem;
+}
+.hero-visual{
+  position:relative;
+  overflow:hidden;
+  border-left:1px solid var(--border);
+  background:var(--bg-card);
 }
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:.5rem;
@@ -148,28 +162,23 @@ nav{
   background:var(--teal-dim);
   color:var(--teal);
   font-size:.76rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
-  margin-bottom:2rem;
+  width:fit-content;
 }
-.hero-eyebrow span{width:5px;height:5px;border-radius:50%;background:var(--teal);display:block}
+.hero-eyebrow span{width:5px;height:5px;border-radius:50%;background:var(--teal);display:block;flex-shrink:0}
 .hero h1{
   font-family:'Bricolage Grotesque',sans-serif;
   font-weight:800;
-  font-size:clamp(3.2rem,7vw,7.5rem);
+  font-size:clamp(2.8rem,4.5vw,5.5rem);
   letter-spacing:-0.04em;
   line-height:1.0;
   max-width:14ch;
-  margin-bottom:1.75rem;
 }
-.hero h1 em{
-  font-style:normal;
-  color:var(--teal);
-}
+.hero h1 em{font-style:normal;color:var(--teal)}
 .hero-sub{
-  font-size:clamp(1rem,1.6vw,1.2rem);
+  font-size:clamp(.95rem,1.2vw,1.05rem);
   color:var(--text-muted);
-  max-width:46ch;
-  line-height:1.7;
-  margin-bottom:2.5rem;
+  max-width:44ch;
+  line-height:1.8;
   font-weight:300;
 }
 .hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
@@ -193,29 +202,42 @@ nav{
   transition:opacity .2s,transform .15s;
 }
 .btn-primary:hover{opacity:.88;transform:translateY(-1px)}
-
-/* Hero canvas - full bleed background */
-#hero-canvas{
-  position:absolute;inset:0;
-  width:100%;height:100%;
-  opacity:1;
-  pointer-events:none;
-  z-index:0;
+/* ─── TERMINAL MOCKUP ─── */
+#terminal-canvas{position:absolute;inset:0;width:100%;height:100%}
+.terminal-ui{position:absolute;inset:0;display:flex;flex-direction:column;z-index:2;pointer-events:none}
+.terminal-header{
+  padding:1rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(13,18,16,0.9);
+  backdrop-filter:blur(8px);
+  flex-shrink:0;
 }
-/* Always dark overlay for readability */
-.hero-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(105deg,rgba(4,12,6,0.82) 0%,rgba(4,12,6,0.55) 55%,rgba(4,12,6,0.2) 100%);
-  z-index:1;
-  pointer-events:none;
+.terminal-pair{font-family:'DM Mono',monospace;font-size:.78rem;font-weight:500;color:var(--text);display:flex;align-items:center;gap:.75rem}
+.t-price{font-size:1.05rem;font-weight:600;color:var(--teal)}
+.t-change{font-size:.7rem;padding:.15rem .45rem;background:rgba(62,207,173,.15);color:var(--teal);border-radius:4px}
+.t-badge{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:.4rem}
+.t-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.25}}
+.terminal-body{flex:1;position:relative;overflow:hidden}
+.terminal-footer{
+  padding:.9rem 1.5rem;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;
+  border-top:1px solid var(--border);
+  background:rgba(13,18,16,0.9);
+  backdrop-filter:blur(8px);
+  flex-shrink:0;
 }
-/* Force white text in hero regardless of theme */
-.hero,.hero *:not(.btn-primary){color:#fff !important}
-.hero .hero-sub{color:rgba(255,255,255,0.72) !important}
-.hero .btn-outline{border-color:rgba(255,255,255,0.3) !important;color:rgba(255,255,255,0.8) !important}
-.hero .btn-outline:hover{border-color:var(--teal) !important;color:#fff !important}
-.hero .hero-eyebrow{color:var(--teal) !important}
-.hero > *:not(#hero-canvas):not(.hero-overlay){position:relative;z-index:2}
+.t-stat{display:flex;flex-direction:column;gap:.15rem}
+.t-stat-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
+.t-stat-val{font-family:'DM Mono',monospace;font-size:.8rem;font-weight:500;color:var(--text)}
+.t-stat-val.up{color:var(--teal)}
+.t-stat-val.dn{color:#f87171}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-content{padding:8rem 1.5rem 3rem}
+  .hero-visual{display:none}
+}
 
 /* ─── MARQUEE ─── */
 .marquee-section{
@@ -515,7 +537,6 @@ footer{
   section{padding:4rem 1.25rem}
   .steps-grid,.modules-grid,.benchmarks-row{grid-template-columns:1fr}
   .use-cases-grid{grid-template-columns:1fr}
-  #hero-canvas{display:none}
   footer{flex-direction:column;align-items:flex-start}
   .philosophy-contact{flex-direction:column}
 }
@@ -547,29 +568,32 @@ footer{
 
 <!-- HERO -->
 <section class="hero">
-  <canvas id="hero-canvas"></canvas>
-  <div class="hero-overlay"></div>
-
-  <div class="hero-eyebrow reveal">
-    <span></span>
-    End-to-End Market Infrastructure · Tokenized Assets
+  <!-- LEFT: content -->
+  <div class="hero-content">
+    <div class="hero-eyebrow reveal">
+      <span></span>
+      End-to-End Market Infrastructure · Tokenized Assets
+    </div>
+    <h1 class="reveal reveal-delay-1">
+      Markets Built to <em>Withstand</em> Real Conditions.
+    </h1>
+    <p class="hero-sub reveal reveal-delay-2">
+      Calix Markets brings structure, control, and continuity to token economies.
+      Where fragmented models distribute responsibility, we consolidate execution
+      into a unified infrastructure layer — engineered for alignment, resilience, and compounding performance.
+    </p>
+    <div class="hero-actions reveal reveal-delay-3">
+      <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-primary">
+        Schedule a Call →
+      </a>
+      <a href="#approach" class="btn-outline">See How It Works</a>
+    </div>
   </div>
 
-  <h1 class="reveal reveal-delay-1">
-    Markets Built to <em>Withstand</em> Real Conditions.
-  </h1>
+  <!-- RIGHT: animated market terminal -->
+  <div class="hero-visual">
+    <canvas id="terminal-canvas"></canvas>
 
-  <p class="hero-sub reveal reveal-delay-2">
-    Calix Markets brings structure, control, and continuity to token economies.
-    Where fragmented models distribute responsibility, we consolidate execution
-    into a unified infrastructure layer — engineered for alignment, resilience, and compounding performance.
-  </p>
-
-  <div class="hero-actions reveal reveal-delay-3">
-    <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-primary">
-      Schedule a Call →
-    </a>
-    <a href="#approach" class="btn-outline">See How It Works</a>
   </div>
 </section>
 
@@ -778,309 +802,165 @@ const track = document.getElementById('marqueeTrack');
   track.appendChild(el);
 });
 
-/* ─── HERO CANVAS — TOUCAN + CHARTS ─── */
-const canvas = document.getElementById('hero-canvas');
-const ctx = canvas.getContext('2d');
-let W, H;
+/* ─── ABSTRACT VISUAL ─── */
+(function(){
+  const cvs = document.getElementById('terminal-canvas');
+  if(!cvs) return;
+  const ctx = cvs.getContext('2d');
+  let W, H, t = 0;
 
-// ── Candlestick data ──
-const CANDLES = 60;
-let candles = [];
-let priceHistory = [];
-let frameCount = 0;
+  // Nodes for connection web
+  const NODES = 28;
+  let nodes = [];
 
-function genCandle(prev) {
-  const open = prev ? prev.close : 100 + Math.random()*40;
-  const move = (Math.random()-0.46)*4.5;
-  const close = open + move;
-  const high = Math.max(open,close) + Math.random()*3;
-  const low  = Math.min(open,close) - Math.random()*3;
-  const vol  = 0.3 + Math.random()*0.7;
-  return {open,close,high,low,vol};
-}
-
-function initCandles() {
-  candles = [];
-  for(let i=0;i<CANDLES;i++) candles.push(genCandle(candles[i-1]));
-  priceHistory = candles.map(c=>c.close);
-}
-
-function resize() {
-  const hero = canvas.parentElement;
-  W = hero.offsetWidth || window.innerWidth;
-  H = hero.offsetHeight || window.innerHeight;
-  canvas.width = W * devicePixelRatio;
-  canvas.height = H * devicePixelRatio;
-  ctx.scale(devicePixelRatio, devicePixelRatio);
-  initCandles();
-}
-
-// ── Draw toucan ──
-function drawToucan(cx, cy, sc) {
-  // Branch
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(cx-55*sc, cy+82*sc); ctx.lineTo(cx+65*sc, cy+82*sc);
-  ctx.strokeStyle='rgba(60,40,15,0.7)'; ctx.lineWidth=9*sc; ctx.lineCap='round'; ctx.stroke();
-
-  // Body
-  ctx.beginPath();
-  ctx.ellipse(cx+5*sc, cy+32*sc, 42*sc, 50*sc, -0.08, 0, Math.PI*2);
-  ctx.fillStyle='rgba(15,15,15,0.88)'; ctx.fill();
-
-  // White chest
-  ctx.beginPath();
-  ctx.ellipse(cx+14*sc, cy+18*sc, 20*sc, 28*sc, 0.15, 0, Math.PI*2);
-  ctx.fillStyle='rgba(245,240,220,0.92)'; ctx.fill();
-
-  // Teal chest band
-  ctx.beginPath();
-  ctx.ellipse(cx+15*sc, cy+44*sc, 18*sc, 8*sc, 0.1, 0, Math.PI*2);
-  ctx.fillStyle='rgba(62,207,173,0.85)'; ctx.fill();
-
-  // Head
-  ctx.beginPath();
-  ctx.arc(cx+18*sc, cy-28*sc, 30*sc, 0, Math.PI*2);
-  ctx.fillStyle='rgba(12,12,12,0.9)'; ctx.fill();
-
-  // Beak — lower jaw (yellow-orange)
-  ctx.beginPath();
-  ctx.moveTo(cx+42*sc, cy-18*sc);
-  ctx.bezierCurveTo(cx+115*sc,cy-8*sc,  cx+130*sc,cy+8*sc,  cx+90*sc,cy+18*sc);
-  ctx.bezierCurveTo(cx+80*sc, cy+14*sc, cx+55*sc, cy+2*sc,  cx+42*sc, cy-8*sc);
-  ctx.closePath();
-  ctx.fillStyle='rgba(235,185,55,0.95)'; ctx.fill();
-
-  // Beak — upper jaw (green to yellow)
-  const beakGrad = ctx.createLinearGradient(cx+42*sc,0,cx+130*sc,0);
-  beakGrad.addColorStop(0,'rgba(90,175,60,0.95)');
-  beakGrad.addColorStop(0.5,'rgba(160,200,50,0.9)');
-  beakGrad.addColorStop(1,'rgba(235,185,55,0.9)');
-  ctx.beginPath();
-  ctx.moveTo(cx+42*sc, cy-18*sc);
-  ctx.bezierCurveTo(cx+115*sc,cy-32*sc, cx+132*sc,cy-12*sc, cx+90*sc,cy+4*sc);
-  ctx.bezierCurveTo(cx+80*sc, cy-2*sc,  cx+55*sc, cy-12*sc, cx+42*sc,cy-18*sc);
-  ctx.closePath();
-  ctx.fillStyle=beakGrad; ctx.fill();
-
-  // Beak ridge line
-  ctx.beginPath();
-  ctx.moveTo(cx+42*sc, cy-18*sc);
-  ctx.bezierCurveTo(cx+115*sc,cy-20*sc, cx+128*sc,cy-10*sc, cx+90*sc,cy+10*sc);
-  ctx.strokeStyle='rgba(80,50,0,0.3)'; ctx.lineWidth=1.5*sc; ctx.stroke();
-
-  // Eye ring
-  ctx.beginPath();
-  ctx.arc(cx+34*sc, cy-36*sc, 9*sc, 0, Math.PI*2);
-  ctx.fillStyle='rgba(62,207,173,0.7)'; ctx.fill();
-
-  // Eye white
-  ctx.beginPath();
-  ctx.arc(cx+34*sc, cy-36*sc, 7*sc, 0, Math.PI*2);
-  ctx.fillStyle='rgba(245,245,245,1)'; ctx.fill();
-
-  // Pupil
-  ctx.beginPath();
-  ctx.arc(cx+35*sc, cy-36*sc, 4*sc, 0, Math.PI*2);
-  ctx.fillStyle='#050f07'; ctx.fill();
-
-  // Eye highlight
-  ctx.beginPath();
-  ctx.arc(cx+33*sc, cy-38*sc, 1.5*sc, 0, Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fill();
-
-  // Tail feathers
-  ctx.beginPath();
-  ctx.moveTo(cx-32*sc, cy+50*sc);
-  ctx.bezierCurveTo(cx-70*sc,cy+55*sc, cx-75*sc,cy+75*sc, cx-55*sc,cy+80*sc);
-  ctx.bezierCurveTo(cx-80*sc,cy+70*sc, cx-80*sc,cy+50*sc, cx-32*sc,cy+48*sc);
-  ctx.fillStyle='rgba(15,15,15,0.85)'; ctx.fill();
-
-  // Feet
-  [cx-8*sc, cx+16*sc].forEach(fx=>{
-    ctx.beginPath();
-    ctx.moveTo(fx, cy+79*sc);
-    ctx.lineTo(fx-12*sc, cy+89*sc);
-    ctx.moveTo(fx, cy+79*sc);
-    ctx.lineTo(fx, cy+91*sc);
-    ctx.moveTo(fx, cy+79*sc);
-    ctx.lineTo(fx+10*sc, cy+87*sc);
-    ctx.strokeStyle='rgba(60,40,15,0.75)';
-    ctx.lineWidth=3.5*sc; ctx.lineCap='round'; ctx.stroke();
-  });
-
-  ctx.restore();
-}
-
-// ── Draw charts ──
-function drawCharts() {
-  const chartX = 30, chartY = H*0.18;
-  const chartW = W*0.52, chartH = H*0.48;
-
-  // Grid
-  ctx.save();
-  for(let i=0;i<=5;i++){
-    const y = chartY + (chartH/5)*i;
-    ctx.beginPath(); ctx.moveTo(chartX,y); ctx.lineTo(chartX+chartW,y);
-    ctx.strokeStyle='rgba(62,207,173,0.08)'; ctx.lineWidth=1; ctx.stroke();
-  }
-  for(let i=0;i<=8;i++){
-    const x = chartX + (chartW/8)*i;
-    ctx.beginPath(); ctx.moveTo(x,chartY); ctx.lineTo(x,chartY+chartH);
-    ctx.strokeStyle='rgba(62,207,173,0.06)'; ctx.lineWidth=1; ctx.stroke();
-  }
-  ctx.restore();
-
-  // Price range
-  const allPrices = candles.flatMap(c=>[c.high,c.low]);
-  const minP = Math.min(...allPrices)-2, maxP = Math.max(...allPrices)+2;
-  const priceRange = maxP - minP;
-  const toY = p => chartY + chartH - ((p-minP)/priceRange)*chartH;
-  const candleW = (chartW/CANDLES)*0.72;
-  const gap     = (chartW/CANDLES);
-
-  // Volume bars
-  ctx.save();
-  candles.forEach((c,i)=>{
-    const x = chartX + i*gap;
-    const isUp = c.close>=c.open;
-    ctx.fillStyle = isUp ? 'rgba(62,207,173,0.15)' : 'rgba(255,90,90,0.12)';
-    const volH = c.vol * (chartH*0.18);
-    ctx.fillRect(x, chartY+chartH-volH, candleW, volH);
-  });
-  ctx.restore();
-
-  // Candles
-  ctx.save();
-  candles.forEach((c,i)=>{
-    const x = chartX + i*gap + candleW*0.5 - 0.5;
-    const isUp = c.close>=c.open;
-    const col = isUp ? 'rgba(62,207,173,0.9)' : 'rgba(255,90,90,0.85)';
-    // Wick
-    ctx.beginPath();
-    ctx.moveTo(x, toY(c.high)); ctx.lineTo(x, toY(c.low));
-    ctx.strokeStyle=col; ctx.lineWidth=1.2; ctx.stroke();
-    // Body
-    const bodyTop = toY(Math.max(c.open,c.close));
-    const bodyBot = toY(Math.min(c.open,c.close));
-    const bodyH = Math.max(1.5, bodyBot-bodyTop);
-    ctx.fillStyle=col;
-    ctx.fillRect(chartX+i*gap, bodyTop, candleW, bodyH);
-  });
-  ctx.restore();
-
-  // Price line (smooth)
-  ctx.save();
-  ctx.beginPath();
-  priceHistory.forEach((p,i)=>{
-    const x = chartX + i*gap + candleW/2;
-    const y = toY(p);
-    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-  });
-  ctx.strokeStyle='rgba(62,207,173,0.55)'; ctx.lineWidth=1.5;
-  ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
-
-  // Glow on last price
-  const lastX = chartX+(candles.length-1)*gap+candleW/2;
-  const lastY = toY(priceHistory[priceHistory.length-1]);
-  const pulse = Math.sin(frameCount*0.05)*0.5+0.5;
-  ctx.beginPath();
-  ctx.arc(lastX,lastY,4+pulse*3,0,Math.PI*2);
-  ctx.fillStyle=`rgba(62,207,173,${0.2+pulse*0.3})`; ctx.fill();
-  ctx.beginPath();
-  ctx.arc(lastX,lastY,3,0,Math.PI*2);
-  ctx.fillStyle='rgba(62,207,173,1)'; ctx.fill();
-
-  // Price label
-  const lastPrice = priceHistory[priceHistory.length-1];
-  ctx.fillStyle='rgba(62,207,173,1)';
-  ctx.font=`500 11px 'DM Mono', monospace`;
-  ctx.fillText(lastPrice.toFixed(2), lastX+8, lastY+4);
-
-  ctx.restore();
-
-  // Chart labels
-  ctx.save();
-  ctx.fillStyle='rgba(255,255,255,0.25)';
-  ctx.font=`400 10px 'DM Mono', monospace`;
-  ctx.fillText('CALIX / USD', chartX, chartY-10);
-  ctx.fillStyle='rgba(62,207,173,0.6)';
-  ctx.fillText('LIVE', chartX+80, chartY-10);
-  ctx.restore();
-}
-
-// ── Firefly nodes ──
-let nodes = [];
-function initNodes() {
-  nodes = Array.from({length:14},()=>({
-    x:Math.random()*W, y:Math.random()*H,
-    vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
-    r:Math.random()*1.8+.8, pulse:Math.random()*Math.PI*2
-  }));
-}
-
-function drawFrame() {
-  frameCount++;
-  ctx.clearRect(0,0,W,H);
-
-  // Background
-  const bgGrad = ctx.createLinearGradient(0,0,W,H);
-  bgGrad.addColorStop(0,'#04100A');
-  bgGrad.addColorStop(0.5,'#061209');
-  bgGrad.addColorStop(1,'#040d07');
-  ctx.fillStyle=bgGrad;
-  ctx.fillRect(0,0,W,H);
-
-  // Subtle radial glow center-right
-  const glow = ctx.createRadialGradient(W*.7,H*.4,0,W*.7,H*.4,W*.55);
-  glow.addColorStop(0,'rgba(62,207,173,0.06)');
-  glow.addColorStop(1,'transparent');
-  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
-
-  // Toucan (right side)
-  if(W>600) {
-    const toucanX = W*0.78, toucanY = H*0.46, toucanSc = Math.min(H/600, W/900)*1.1;
-    drawToucan(toucanX, toucanY, toucanSc);
+  function resize(){
+    W = cvs.offsetWidth;
+    H = cvs.offsetHeight;
+    cvs.width = W * devicePixelRatio;
+    cvs.height = H * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    initNodes();
   }
 
-  // Charts (left/center)
-  drawCharts();
-
-  // Floating nodes
-  nodes.forEach(n=>{
-    n.x+=n.vx; n.y+=n.vy; n.pulse+=.012;
-    if(n.x<0||n.x>W) n.vx*=-1;
-    if(n.y<0||n.y>H) n.vy*=-1;
-  });
-  for(let i=0;i<nodes.length;i++){
-    for(let j=i+1;j<nodes.length;j++){
-      const a=nodes[i],b=nodes[j];
-      const d=Math.hypot(a.x-b.x,a.y-b.y);
-      if(d<160){
-        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
-        ctx.strokeStyle=`rgba(62,207,173,${(1-d/160)*.12})`; ctx.lineWidth=.7; ctx.stroke();
-      }
+  function initNodes(){
+    nodes = [];
+    for(let i = 0; i < NODES; i++){
+      nodes.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - .5) * .22,
+        vy: (Math.random() - .5) * .22,
+        r: Math.random() * 1.4 + .6,
+        phase: Math.random() * Math.PI * 2,
+      });
     }
   }
-  nodes.forEach(n=>{
-    const p=Math.sin(n.pulse)*.5+.5;
-    ctx.beginPath(); ctx.arc(n.x,n.y,n.r+p,0,Math.PI*2);
-    ctx.fillStyle=`rgba(62,207,173,${.25+p*.3})`; ctx.fill();
-  });
 
-  // Scroll new candle every ~90 frames
-  if(frameCount%90===0){
-    candles.shift(); candles.push(genCandle(candles[candles.length-1]));
-    priceHistory.shift(); priceHistory.push(candles[candles.length-1].close);
+  // Flowing curve data — several sine-based lines
+  const CURVES = 6;
+  const curveOffsets = Array.from({length: CURVES}, (_,i) => ({
+    amp: 18 + i * 14,
+    freq: 0.0045 + i * 0.0012,
+    speed: 0.003 + i * 0.0007,
+    yBase: 0.18 + i * 0.12,
+    phase: i * 1.1,
+  }));
+
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    const isDark = document.documentElement.dataset.theme !== 'light';
+    const baseAlpha = isDark ? 1 : 0.85;
+
+    // ── Subtle dot grid ──
+    const gridStep = 36;
+    ctx.fillStyle = isDark ? 'rgba(255,255,255,0.045)' : 'rgba(0,0,0,0.055)';
+    for(let gx = gridStep; gx < W; gx += gridStep){
+      for(let gy = gridStep; gy < H; gy += gridStep){
+        ctx.beginPath();
+        ctx.arc(gx, gy, .9, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // ── Flowing sine curves ──
+    curveOffsets.forEach((c, ci) => {
+      const alpha = (0.06 - ci * 0.008) * baseAlpha;
+      ctx.beginPath();
+      for(let x = 0; x <= W; x += 2){
+        const y = H * c.yBase +
+          c.amp * Math.sin(x * c.freq + t * c.speed + c.phase) +
+          (c.amp * .4) * Math.sin(x * c.freq * 1.7 - t * c.speed * .8 + c.phase * 1.3);
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = isDark
+        ? `rgba(255,255,255,${alpha})`
+        : `rgba(0,0,0,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Slightly brighter foreground curve
+    ctx.beginPath();
+    for(let x = 0; x <= W; x += 2){
+      const y = H * 0.52
+        + 24 * Math.sin(x * 0.008 + t * 0.004)
+        + 10 * Math.sin(x * 0.018 - t * 0.006 + 1.2);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.12)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // ── Node connections ──
+    nodes.forEach(n => {
+      n.x += n.vx; n.y += n.vy; n.phase += .008;
+      if(n.x < 0 || n.x > W) n.vx *= -1;
+      if(n.y < 0 || n.y > H) n.vy *= -1;
+    });
+
+    for(let i = 0; i < nodes.length; i++){
+      for(let j = i + 1; j < nodes.length; j++){
+        const a = nodes[i], b = nodes[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if(d < 160){
+          const alpha = (1 - d / 160) * 0.12 * baseAlpha;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = isDark
+            ? `rgba(255,255,255,${alpha})`
+            : `rgba(0,0,0,${alpha * 0.7})`;
+          ctx.lineWidth = .6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Nodes
+    nodes.forEach(n => {
+      const pulse = Math.sin(n.phase) * .5 + .5;
+      const alpha = (0.18 + pulse * 0.22) * baseAlpha;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + pulse, 0, Math.PI * 2);
+      ctx.fillStyle = isDark
+        ? `rgba(255,255,255,${alpha})`
+        : `rgba(0,0,0,${alpha * 0.6})`;
+      ctx.fill();
+    });
+
+    // ── Horizontal rule lines ──
+    [0.25, 0.5, 0.72].forEach(frac => {
+      ctx.beginPath();
+      ctx.moveTo(0, H * frac);
+      ctx.lineTo(W, H * frac);
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 6]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Bottom fade to match card bg
+    const fade = ctx.createLinearGradient(0, H * 0.7, 0, H);
+    if(isDark){
+      fade.addColorStop(0, 'transparent');
+      fade.addColorStop(1, 'rgba(13,18,16,1)');
+    } else {
+      fade.addColorStop(0, 'transparent');
+      fade.addColorStop(1, 'rgba(255,255,255,1)');
+    }
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, 0, W, H);
+
+    t++;
+    requestAnimationFrame(draw);
   }
 
-  requestAnimationFrame(drawFrame);
-}
-
-window.addEventListener('resize',()=>{ resize(); initNodes(); });
-
-// Delay init to ensure layout is computed
-window.addEventListener('load', () => { resize(); initNodes(); drawFrame(); });
+  resize();
+  draw();
+  window.addEventListener('resize', resize);
+})();
 
 /* ─── SCROLL REVEAL ─── */
 const observer = new IntersectionObserver(entries => {
