@@ -267,11 +267,11 @@ nav{
 }
 .marquee-track:hover{animation-play-state:paused}
 .marquee-item{
-  display:flex;align-items:center;
-  padding:0 2.5rem;
+  display:flex;align-items:center;gap:.6rem;
+  padding:0 2.25rem;
   font-family:'Bricolage Grotesque',sans-serif;
   font-weight:600;
-  font-size:1.1rem;
+  font-size:.95rem;
   color:var(--text-muted);
   white-space:nowrap;
   transition:color .2s;
@@ -281,8 +281,15 @@ nav{
   width:4px;height:4px;
   border-radius:50%;
   background:var(--teal);
-  margin-left:2.5rem;
-  opacity:.5;
+  margin-left:2.25rem;
+  opacity:.4;
+}
+.exchange-logo{
+  width:20px;height:20px;
+  object-fit:contain;
+  border-radius:4px;
+  opacity:.75;
+  flex-shrink:0;
 }
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
@@ -797,13 +804,39 @@ btn.addEventListener('click', () => {
 });
 
 /* ─── MARQUEE ─── */
-const exchanges = ['Binance','OKX','Upbit','ByBit','Bitget','Gate.io','KuCoin','MEXC','Bitfinex','BingX','Kraken','Bithumb','HTX','Coinbase'];
+const exchanges = [
+  { name: 'Binance',  domain: 'binance.com'  },
+  { name: 'OKX',      domain: 'okx.com'      },
+  { name: 'Upbit',    domain: 'upbit.com'    },
+  { name: 'Bybit',    domain: 'bybit.com'    },
+  { name: 'Bitget',   domain: 'bitget.com'   },
+  { name: 'Gate.io',  domain: 'gate.io'      },
+  { name: 'KuCoin',   domain: 'kucoin.com'   },
+  { name: 'MEXC',     domain: 'mexc.com'     },
+  { name: 'Bitfinex', domain: 'bitfinex.com' },
+  { name: 'BingX',    domain: 'bingx.com'    },
+  { name: 'Kraken',   domain: 'kraken.com'   },
+  { name: 'Bithumb',  domain: 'bithumb.com'  },
+  { name: 'HTX',      domain: 'htx.com'      },
+  { name: 'Coinbase', domain: 'coinbase.com' },
+];
 const track = document.getElementById('marqueeTrack');
-// Duplicate for seamless loop
-[...exchanges, ...exchanges].forEach(name => {
+[...exchanges, ...exchanges].forEach(({ name, domain }) => {
   const el = document.createElement('div');
   el.className = 'marquee-item';
-  el.textContent = name;
+
+  const img = document.createElement('img');
+  img.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+  img.alt = name;
+  img.className = 'exchange-logo';
+  img.width = 20;
+  img.height = 20;
+
+  const span = document.createElement('span');
+  span.textContent = name;
+
+  el.appendChild(img);
+  el.appendChild(span);
   track.appendChild(el);
 });
 
