@@ -147,15 +147,7 @@ nav{
   display:flex;flex-direction:column;
   gap:1.5rem;
 }
-/* Left-to-right gradient masks text area, lets visual bleed through on right */
-.hero-content::before{
-  content:'';
-  position:absolute;inset:0;
-  right:-6rem;
-  background:linear-gradient(90deg, var(--bg) 60%, transparent 100%);
-  z-index:-1;
-  pointer-events:none;
-}
+
 .hero-visual{
   position:absolute;
   inset:0;
@@ -243,7 +235,6 @@ nav{
 .t-stat-val.dn{color:#f87171}
 @media(max-width:900px){
   .hero-content{max-width:100%;padding:8rem 1.5rem 4rem}
-  .hero-content::before{right:0;background:linear-gradient(180deg, var(--bg) 70%, transparent 100%)}
 }
 
 /* ─── MARQUEE ─── */
@@ -763,7 +754,7 @@ footer{
           <a href="https://calendly.com/calixmarkets" target="_blank" class="btn-primary" style="font-size:.95rem;padding:.75rem 1.75rem">
             Schedule a Call →
           </a>
-          <a href="/cdn-cgi/l/email-protection#2650434852535443550845474a4f5e66414b474f4a0845494b" class="btn-outline" style="font-size:.95rem;padding:.75rem 1.75rem">
+          <a href="mailto:raghurajrai.official@gmail.com" class="btn-outline" style="font-size:.95rem;padding:.75rem 1.75rem">
             Write to Us
           </a>
         </div>
@@ -772,9 +763,9 @@ footer{
             <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
             calendly.com/calixmarkets
           </a>
-          <a href="/cdn-cgi/l/email-protection#1264777c66676077613c71737e7b6a52757f737b7e3c717d7f" class="contact-item">
+          <a href="mailto:raghurajrai.official@gmail.com" class="contact-item">
             <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span class="__cf_email__" data-cfemail="ed9b888399989f889ec38e8c818495ad8a808c8481c38e8280">[email&#160;protected]</span>
+            raghurajrai.official@gmail.com
           </a>
           <a href="https://t.me/RaghuRajRai" target="_blank" class="contact-item">
             <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -795,7 +786,7 @@ footer{
   <p class="footer-copy">© 2026 Calix Markets. All rights reserved.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 /* ─── THEME TOGGLE ─── */
 const html = document.documentElement;
 const btn = document.getElementById('themeToggle');
@@ -979,29 +970,24 @@ const track = document.getElementById('marqueeTrack');
       ctx.setLineDash([]);
     });
 
-    // Left fade — content area bleeds into visual
-    const fadeL = ctx.createLinearGradient(0, 0, W * 0.55, 0);
-    if(isDark){
-      fadeL.addColorStop(0, 'rgba(6,10,7,1)');
-      fadeL.addColorStop(0.45, 'rgba(6,10,7,0.55)');
-      fadeL.addColorStop(1, 'transparent');
-    } else {
-      fadeL.addColorStop(0, 'rgba(245,248,246,1)');
-      fadeL.addColorStop(0.45, 'rgba(245,248,246,0.55)');
-      fadeL.addColorStop(1, 'transparent');
-    }
+    // Layered fades — left (text legibility) + bottom (section bleed)
+    const bgDark  = 'rgba(6,10,7,';
+    const bgLight = 'rgba(245,248,246,';
+    const bg = isDark ? bgDark : bgLight;
+
+    // Left fade: solid behind text, dissolves into visual toward right
+    const fadeL = ctx.createLinearGradient(0, 0, W, 0);
+    fadeL.addColorStop(0,    bg + '0.92)');
+    fadeL.addColorStop(0.32, bg + '0.82)');
+    fadeL.addColorStop(0.55, bg + '0.35)');
+    fadeL.addColorStop(1,    bg + '0.0)');
     ctx.fillStyle = fadeL;
     ctx.fillRect(0, 0, W, H);
 
-    // Bottom fade
-    const fadeB = ctx.createLinearGradient(0, H * 0.75, 0, H);
-    if(isDark){
-      fadeB.addColorStop(0, 'transparent');
-      fadeB.addColorStop(1, 'rgba(6,10,7,0.7)');
-    } else {
-      fadeB.addColorStop(0, 'transparent');
-      fadeB.addColorStop(1, 'rgba(245,248,246,0.7)');
-    }
+    // Bottom fade: smooth exit into the next section
+    const fadeB = ctx.createLinearGradient(0, H * 0.65, 0, H);
+    fadeB.addColorStop(0, 'transparent');
+    fadeB.addColorStop(1, bg + '1)');
     ctx.fillStyle = fadeB;
     ctx.fillRect(0, 0, W, H);
 
